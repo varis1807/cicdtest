@@ -1,0 +1,135 @@
+version: "3.7"
+services:
+    abha-services:
+        platform: linux/amd64
+        build: 
+            context: .
+            dockerfile: ./apps/abha-services/Dockerfile
+        container_name: abha
+        hostname: abha-services
+        command: npm run start abha-services
+        env_file:
+            - .env
+       
+        ports:
+            - '8081:8081'
+        networks:
+            - my_network
+    parchaa-ndhm:
+        platform: linux/amd64
+        build: 
+            context: .
+            dockerfile: ./apps/parchaa-ndhm/Dockerfile
+        container_name: ndhm
+        hostname: parchaa-ndhm
+        command: npm run start parchaa-ndhm
+        env_file:
+            - .env
+        depends_on:
+            - abha-services
+        ports:
+            - '1506:1506'
+        networks:
+            - my_network
+    user-services:
+        platform: linux/amd64
+        build:
+            context: .
+            dockerfile: ./apps/user-services/Dockerfile
+        container_name: user
+        hostname: user-services
+        command: npm run start user-services
+        env_file:
+            - .env
+        depends_on:
+            - postgres
+            # - fhir
+        volumes:
+            - .:/usr/src/app
+            - /usr/src/app/node_modules
+        ports:
+            - '8082:8082'
+        links:
+            - postgres
+            # - fhir
+        networks:
+            - my_network
+    # fhir:
+    #     # platform: linux/amd64
+    #     container_name: fhir
+    #     image: hapiproject/hapi:latest
+    #     ports:
+    #         - "7070:8080"
+    #     environment:
+    #         profiles.active: r4
+    #         spring.datasource.url: 'jdbc:postgresql://db:5432/hapi'
+    #         spring.datasource.username: parchaa
+    #         spring.datasource.password: parchaa-hapi-server
+    #         spring.datasource.driverClassName: org.postgresql.Driver
+    #         spring.jpa.properties.hibernate.dialect:  ca.uhn.fhir.jpa.model.dialect.HapiFhirPostgres94Dialect
+    #         hapi.fhir.use_apache_address_strategy: 'true'
+    #         hapi.fhir.logger.reuse_cached_search_results_millis: -1
+    #         hapi.fhir.logger.retain_cached_searches_mins: 0
+    #         hapi.fhir.subscription.resthook_enabled: 'false'
+    #         hapi.fhir.subscription.websocket_enabled: 'false' 
+    #         hapi.mdm_enabled: 'false' 
+    #         # - "tester.server_address=http://localhost:8080/fhir"
+    #         hapi.fhir.reuse_cached_search_results_millis: -1
+    #         hapi.fhir.retain_cached_searches_mins : -1
+    #         reuse_cached_search_results_millis: -1
+    #         retain_cached_searches_mins: -1
+    #     # SPRING_CONFIG_LOCATION: 'file:///data/hapi/application.yaml'
+    #     volumes:
+    #      - ./hapi-data:/data/hapi
+    #     depends_on:
+    #     - db
+    #     networks:
+    #     - my_network
+    # db:
+    #     # platform: linux/amd64
+    #     image: postgres
+    #     restart: always
+    #     container_name: postgres-fhir
+    #     volumes:
+    #         - .:/usr/src/app
+    #         - /usr/src/app/node_modules
+    #     environment:
+    #         POSTGRES_PASSWORD: parchaa-hapi-server
+    #         POSTGRES_USER: parchaa
+    #         POSTGRES_DB: hapi
+    #         # not needed for networking between containers but here for troubleshooting
+    #     ports:
+    #         - "5632:5432"
+    #     networks:
+    #      - my_network
+    # jsreport:
+    #     # platform: linux/amd64
+    #     image: jsreport/jsreport
+    #     depends_on:
+    #         - fhir
+    #     environment:
+    #         aappPath: /jsreport
+    #     ports:
+    #         - "5488:5488"
+    #     networks:
+    #         - my_network
+    postgres:
+        image: postgres:13-alpine
+        ports:
+            - '5032:5432'
+        restart: always
+        container_name: postgres
+        hostname: postgres
+        platform: linux/amd64
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_USER=parchaa
+            - POSTGRES_PASSWORD =parchaa123
+            - POSTGRES_DB =parchaa
+            - POSTGRES_HOST_AUTH_METHOD=trust
+        networks:
+            - my_network
+networks:
+  my_network:
+    driver: bridge

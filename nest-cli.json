@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/parchaa-ndhm/src",
+  "monorepo": true,
+  "root": "apps/parchaa-ndhm",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/parchaa-ndhm/tsconfig.app.json"
+  },
+  "projects": {
+    "parchaa-ndhm": {
+      "type": "application",
+      "root": "apps/parchaa-ndhm",
+      "entryFile": "main",
+      "sourceRoot": "apps/parchaa-ndhm/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/parchaa-ndhm/tsconfig.app.json"
+      }
+    },
+    "abha-services": {
+      "type": "application",
+      "root": "apps/abha-services",
+      "entryFile": "main",
+      "sourceRoot": "apps/abha-services/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/abha-services/tsconfig.app.json"
+      }
+    },
+    "user-services": {
+      "type": "application",
+      "root": "apps/user-services",
+      "entryFile": "main",
+      "sourceRoot": "apps/user-services/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/user-services/tsconfig.app.json"
+      }
+    }
+  }
+}
