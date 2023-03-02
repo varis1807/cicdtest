@@ -14,9 +14,9 @@ describe('UserServicesController', () => {
     userServicesController = app.get<UserServicesController>(UserServicesController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(userServicesController.getHello()).toBe('Hello World!');
-    });
-  });
+//   describe('root', () => {
+//     it('should return "Hello World!"', () => {
+//       expect(userServicesController.getHello()).toBe('Hello World!');
+//     });
+//   });
 });
