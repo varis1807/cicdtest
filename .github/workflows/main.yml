@@ -5,6 +5,13 @@ on:
     branches: [main]
 
 jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm ci
+
   build:
     runs-on: ubuntu-latest
     strategy:
