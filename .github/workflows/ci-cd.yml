@@ -1,43 +1,43 @@
-name: CI/CD Pipeline
-on:
-  push:
-    branches: [main]
-jobs:
-  install:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install Dependencies
-        run: npm ci
-  build:
-    runs-on: ubuntu-latest
-    needs: [install]
-    steps:
-      - name: Build NestJS App
-        run: npm run build [abha-services, parchaa-ndhm, user-services]
-  test:
-    runs-on: ubuntu-latest
-    needs: [install, build]
-    steps:
-      - name: Run Tests
-        run: npm run test [abha-services, parchaa-ndhm, user-services]
-  build-services:
-    runs-on: ubuntu-latest
-    needs: [install]
-    steps:
-      - name: Build Microservices
-        run: npm run build:services
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [test, build-services]
-    steps:
-      - name: Deploy to Server
-        uses: easingthemes/ssh-deploy@v2.1.6
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          username: ${{ secrets.SSH_USERNAME }}
-          host: ${{ secrets.SSH_HOST }}
-          port: ${{ secrets.SSH_PORT }}
-          local-path: '.'
-          remote-path: 'https://github.com/varis1807/cicdtest'
-          args: '--exclude .git*'
+# name: CI/CD Pipeline
+# on:
+#   push:
+#     branches: [main]
+# jobs:
+#   install:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - name: Install Dependencies
+#         run: npm ci
+#   build:
+#     runs-on: ubuntu-latest
+#     needs: [install]
+#     steps:
+#       - name: Build NestJS App
+#         run: npm run build [abha-services, parchaa-ndhm, user-services]
+#   test:
+#     runs-on: ubuntu-latest
+#     needs: [install, build]
+#     steps:
+#       - name: Run Tests
+#         run: npm run test [abha-services, parchaa-ndhm, user-services]
+#   build-services:
+#     runs-on: ubuntu-latest
+#     needs: [install]
+#     steps:
+#       - name: Build Microservices
+#         run: npm run build:services
+#   deploy:
+#     runs-on: ubuntu-latest
+#     needs: [test, build-services]
+#     steps:
+#       - name: Deploy to Server
+#         uses: easingthemes/ssh-deploy@v2.1.6
+#         with:
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+#           username: ${{ secrets.SSH_USERNAME }}
+#           host: ${{ secrets.SSH_HOST }}
+#           port: ${{ secrets.SSH_PORT }}
+#           local-path: '.'
+#           remote-path: 'https://github.com/varis1807/cicdtest'
+#           args: '--exclude .git*'
